@@ -49,6 +49,9 @@ struct ControllerInfo
   /** Controller type. */
   std::string type;
 
+  /** Priority **/
+  int priority;
+
   /** Claimed resources, grouped by the hardware interface they belong to. */
   std::vector<InterfaceResources> claimed_resources;
 };

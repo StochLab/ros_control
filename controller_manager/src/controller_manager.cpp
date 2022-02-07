@@ -307,6 +307,18 @@ bool ControllerManager::loadController(const std::string& name)
     return false;
   }
 
+  // Get controller priority
+  int priority = 10; // Default priority
+  if (c_nh.getParam("priority", priority))
+  {
+    ROS_DEBUG("Controller '%s' assinged priority: %d", name.c_str(), priority);
+  }
+  else
+  {
+    priority = 10; // Assign DEFAULT priority
+    ROS_DEBUG("Controller '%s' assigned DEFAULT priority: %d", name.c_str(), priority);
+  }
+
   // checks if controller was constructed
   if (!c)
   {
@@ -343,8 +355,22 @@ bool ControllerManager::loadController(const std::string& name)
   to.resize(to.size() + 1);
   to.back().info.type = type;
   to.back().info.name = name;
+  to.back().info.priority = priority;
   to.back().info.claimed_resources = claimed_resources;
   to.back().c = c;
+
+  // Sort the list of controllers according to priority
+  std::sort(to.begin(), to.end(),
+      [](ControllerSpec const & a, ControllerSpec const & b) -> bool
+      {return a.info.priority > b.info.priority;}
+      );
+
+  // Print the name of the controllers in order
+  for(auto con : to)
+  {
+    ROS_DEBUG(" Controller: %s, Priority: %d", con.info.name.c_str(), con.info.priority);
+  }
+
 
   // Destroys the old controllers list when the realtime thread is finished with it.
   int former_current_controllers_list_ = current_controllers_list_;
