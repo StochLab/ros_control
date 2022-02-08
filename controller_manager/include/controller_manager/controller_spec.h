@@ -52,6 +52,7 @@ struct ControllerSpec
 {
   hardware_interface::ControllerInfo info;
   controller_interface::ControllerBaseSharedPtr c;
+  int priority;
 };
 
 }

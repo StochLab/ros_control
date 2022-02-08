@@ -355,20 +355,20 @@ bool ControllerManager::loadController(const std::string& name)
   to.resize(to.size() + 1);
   to.back().info.type = type;
   to.back().info.name = name;
-  to.back().info.priority = priority;
+  to.back().priority = priority;
   to.back().info.claimed_resources = claimed_resources;
   to.back().c = c;
 
   // Sort the list of controllers according to priority
   std::sort(to.begin(), to.end(),
       [](ControllerSpec const & a, ControllerSpec const & b) -> bool
-      {return a.info.priority > b.info.priority;}
+      {return a.priority > b.priority;}
       );
 
   // Print the name of the controllers in order
   for(auto con : to)
   {
-    ROS_DEBUG(" Controller: %s, Priority: %d", con.info.name.c_str(), con.info.priority);
+    ROS_DEBUG(" Controller: %s, Priority: %d", con.info.name.c_str(), con.priority);
   }
 
 
@@ -760,6 +760,7 @@ bool ControllerManager::listControllersSrv(
     controller_manager_msgs::ControllerState& cs = resp.controller[i];
     cs.name = controllers[i].info.name;
     cs.type = controllers[i].info.type;
+    cs.priority = controllers[i].priority;
 
     cs.claimed_resources.clear();
     typedef std::vector<hardware_interface::InterfaceResources> ClaimedResVec;
